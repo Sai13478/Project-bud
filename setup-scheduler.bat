@@ -1,8 +1,4 @@
 @echo off
-REM ============================================
-REM  BUD - Auto Setup Windows Task Scheduler
-REM  Run this AS ADMINISTRATOR to create the task
-REM ============================================
 
 echo.
 echo  ====================================

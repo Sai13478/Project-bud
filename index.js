@@ -189,57 +189,50 @@ async function sendApprovalCard(message) {
             return false;
         }
 
+        // Simpler Adaptive Card structure often preferred by Workflows
         const adaptiveCard = {
-            type: "message",
-            attachments: [
+            type: "AdaptiveCard",
+            version: "1.4",
+            body: [
                 {
-                    contentType: "application/vnd.microsoft.card.adaptive",
-                    content: {
-                        type: "AdaptiveCard",
-                        body: [
-                            {
-                                type: "TextBlock",
-                                size: "Medium",
-                                weight: "Bolder",
-                                text: "🚀 BUD: EOD Approval Required",
-                            },
-                            {
-                                type: "TextBlock",
-                                text: "Please review the EOD report below and approve to send it to the main channel.",
-                                wrap: true,
-                            },
-                            {
-                                type: "Container",
-                                style: "emphasis",
-                                items: [
-                                    {
-                                        type: "TextBlock",
-                                        text: message,
-                                        wrap: true,
-                                        fontType: "Monospace",
-                                    },
-                                ],
-                            },
-                        ],
-                        actions: [
-                            {
-                                type: "Action.OpenUrl",
-                                title: "✅ Approve & Send",
-                                url: `${baseUrl}/approve`,
-                            },
-                            {
-                                type: "Action.OpenUrl",
-                                title: "❌ Reject",
-                                url: `${baseUrl}/reject`,
-                            },
-                        ],
-                        $schema: "http://adaptivecards.io/schemas/adaptive-card.json",
-                        version: "1.4",
-                    },
+                    type: "TextBlock",
+                    size: "Medium",
+                    weight: "Bolder",
+                    text: "🚀 BUD: EOD Approval Required",
+                },
+                {
+                    type: "TextBlock",
+                    text: "Review the report below:",
+                    wrap: true,
+                },
+                {
+                    type: "Container",
+                    style: "emphasis",
+                    items: [
+                        {
+                            type: "TextBlock",
+                            text: message,
+                            wrap: true,
+                            fontType: "Monospace",
+                        },
+                    ],
+                },
+            ],
+            actions: [
+                {
+                    type: "Action.OpenUrl",
+                    title: "✅ Approve & Send",
+                    url: `${baseUrl}/approve`,
+                },
+                {
+                    type: "Action.OpenUrl",
+                    title: "❌ Reject",
+                    url: `${baseUrl}/reject`,
                 },
             ],
         };
 
+        // Send just the card object, which many Workflows expect
         await axios.post(webhookUrl, adaptiveCard);
         log("📨 Approval card sent to your PERSONAL chat");
         return true;
