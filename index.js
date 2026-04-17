@@ -127,7 +127,7 @@ async function getGitHubCommits() {
                     if (commitDate === today) {
                         const msg = c.commit.message.split("\n")[0].trim();
                         if (msg && !msg.toLowerCase().includes("merge branch") && !msg.toLowerCase().includes("merged in")) {
-                            allCommits.add(`[${repoName}] ${cleanTask(msg)}`);
+                            allCommits.add(cleanTask(msg));
                         }
                     }
                 });
@@ -287,9 +287,9 @@ async function handleEOD() {
     if (isTest) {
         log("🧪 TEST MODE: Using mock commits...");
         commits = [
-            "[test-repo] Completed the Teams approval system implementation",
-            "[test-repo] Cleaned up unused environment variables",
-            "[test-repo] Added repository filtering support"
+            "Completed the Teams approval system implementation",
+            "Cleaned up unused environment variables",
+            "Added repository filtering support"
         ];
     } else {
         commits = await getGitHubCommits();
