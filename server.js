@@ -26,12 +26,13 @@ app.get("/approve", async (req, res) => {
     }
 
     try {
-        const webhookUrl = process.env.TEAMS_WEBHOOK_URL;
-        await axios.post(webhookUrl, { text: pendingReport });
+        // Post to the PUBLIC CHANNEL
+        const channelWebhookUrl = process.env.TEAMS_CHANNEL_WEBHOOK_URL;
+        await axios.post(channelWebhookUrl, { text: pendingReport });
 
         pendingReport = null; // Clear after sending
-        res.send("<h1>✅ Approved!</h1><p>The EOD has been sent to the main channel.</p>");
-        console.log("👍 Report approved and sent");
+        res.send("<h1>✅ Approved!</h1><p>The EOD has been sent to the MAIN channel.</p>");
+        console.log("👍 Report approved and sent to public channel");
     } catch (err) {
         res.status(500).send("<h1>❌ Failed to send</h1><p>" + err.message + "</p>");
     }

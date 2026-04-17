@@ -161,30 +161,31 @@ function saveEODToFile(message) {
 
 async function sendToTeamsChannel(message) {
     try {
-        if (!process.env.TEAMS_WEBHOOK_URL) {
-            log("⚠️ TEAMS_WEBHOOK_URL not set in .env");
+        const webhookUrl = process.env.TEAMS_CHANNEL_WEBHOOK_URL;
+        if (!webhookUrl) {
+            log("⚠️ TEAMS_CHANNEL_WEBHOOK_URL not set in .env");
             return false;
         }
 
-        await axios.post(process.env.TEAMS_WEBHOOK_URL, {
+        await axios.post(webhookUrl, {
             text: message,
         });
 
-        log("📤 Sent to Teams");
+        log("📤 Sent to Public Channel");
         return true;
     } catch (err) {
-        log(`❌ Failed to send to Teams: ${err.message}`);
+        log(`❌ Failed to send to Channel: ${err.message}`);
         return false;
     }
 }
 
 async function sendApprovalCard(message) {
     try {
-        const webhookUrl = process.env.TEAMS_WEBHOOK_URL;
+        const webhookUrl = process.env.TEAMS_APPROVAL_WEBHOOK_URL;
         const baseUrl = process.env.APPROVAL_BASE_URL;
 
-        if (!baseUrl) {
-            log("⚠️ APPROVAL_BASE_URL not set in .env");
+        if (!webhookUrl) {
+            log("⚠️ TEAMS_APPROVAL_WEBHOOK_URL not set in .env");
             return false;
         }
 
@@ -240,7 +241,7 @@ async function sendApprovalCard(message) {
         };
 
         await axios.post(webhookUrl, adaptiveCard);
-        log("📨 Approval card sent to Teams");
+        log("📨 Approval card sent to your PERSONAL chat");
         return true;
     } catch (err) {
         log(`❌ Failed to send approval card: ${err.message}`);
@@ -275,10 +276,10 @@ async function buildAndSend(tasks) {
                 // Submit to Render for approval
                 await axios.post(`${baseUrl}/submit`, { message: eodMessage });
                 
-                // Send the interactive card to Teams
+                // Send the interactive card to your PERSONAL webhook
                 await sendApprovalCard(eodMessage);
                 
-                log("✅ Submitted to Render. You can now approve in Teams. Script exiting.");
+                log("✅ Submitted for Approval. You can now approve in your PERSONAL Teams chat.");
                 process.exit(0);
             } catch (err) {
                 log(`❌ Failed to submit for approval: ${err.message}`);
