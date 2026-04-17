@@ -182,59 +182,16 @@ async function sendToTeamsChannel(message) {
 async function sendApprovalCard(message) {
     try {
         const webhookUrl = process.env.TEAMS_APPROVAL_WEBHOOK_URL;
-        const baseUrl = process.env.APPROVAL_BASE_URL;
 
         if (!webhookUrl) {
             log("⚠️ TEAMS_APPROVAL_WEBHOOK_URL not set in .env");
             return false;
         }
 
-        // Simpler Adaptive Card structure often preferred by Workflows
-        const adaptiveCard = {
-            type: "AdaptiveCard",
-            version: "1.4",
-            body: [
-                {
-                    type: "TextBlock",
-                    size: "Medium",
-                    weight: "Bolder",
-                    text: "🚀 BUD: EOD Approval Required",
-                },
-                {
-                    type: "TextBlock",
-                    text: "Review the report below:",
-                    wrap: true,
-                },
-                {
-                    type: "Container",
-                    style: "emphasis",
-                    items: [
-                        {
-                            type: "TextBlock",
-                            text: message,
-                            wrap: true,
-                            fontType: "Monospace",
-                        },
-                    ],
-                },
-            ],
-            actions: [
-                {
-                    type: "Action.OpenUrl",
-                    title: "✅ Approve & Send",
-                    url: `${baseUrl}/approve`,
-                },
-                {
-                    type: "Action.OpenUrl",
-                    title: "❌ Reject",
-                    url: `${baseUrl}/reject`,
-                },
-            ],
-        };
-
-        // Send just the card object, which many Workflows expect
-        await axios.post(webhookUrl, adaptiveCard);
-        log("📨 Approval card sent to your PERSONAL chat");
+        // Send a simple payload. Power Automate will use its own JSON to turn this into a card.
+        await axios.post(webhookUrl, { message: message });
+        
+        log("📨 Approval request sent to your PERSONAL chat");
         return true;
     } catch (err) {
         log(`❌ Failed to send approval card: ${err.message}`);
